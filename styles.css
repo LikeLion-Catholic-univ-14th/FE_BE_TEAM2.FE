@@ -1,0 +1,265 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, "Noto Sans KR", sans-serif;
+  color: #2c2412;
+  background: url("https://cdn.vectorstock.com/i/1000v/91/84/pink-polka-dot-tile-pattern-vector-3779184.jpg");
+}
+
+main {
+  width: min(1120px, calc(100% - 20px));
+  margin: 0 auto;
+  padding: 40px 0;
+  display: grid;
+  grid-template-columns: 1.3fr 0.9fr;
+  gap: 36px;
+}
+
+.box {
+  position: relative;
+  padding: 50px;
+  background: white;
+  border: 1px solid #dde4ee;
+  border-radius: 26px;
+  box-shadow: 0 12px 32px rgb(212, 128, 156);
+}
+
+.eyebrow {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 8px 14px;
+  color: hotpink;
+  background: white;
+  border: 2px dotted pink;
+  font-weight: bold;
+}
+
+h1 {
+  margin: 0 0 10px;
+  font-size: 35px;
+  line-height: 1.2;
+}
+
+h2 {
+  margin: 0 0 14px;
+}
+
+.direction {
+  display: inline-block;
+  color: rgb(90, 78, 61);
+  padding: 20px 30px;
+  border: 1px dotted lightgray;
+  border-radius: 18px;
+  background: white;
+  line-height: 1.6;
+}
+
+.animal-area {
+  margin: 30px 0;
+  padding: 22px;
+  text-align: center;
+  background: url("https://img.freepik.com/premium-vector/pink-polka-dot-seamless-pattern_322958-1175.jpg?semt=ais_hybrid&w=740&q=80");
+  border: 2px solid lightgray;
+  border-radius: 26px;
+}
+
+.bubble {
+  position: relative;
+  width: min(340px, 100%);
+  min-height: 60px;
+  margin: 0 auto 28px;
+  padding: 16px 20px;
+  border: 3px solid rgb(222, 245, 251);
+  border-radius: 60px;
+  background: rgb(231, 249, 253);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+
+.animal {
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 12px;
+  display: grid;
+  place-items: center;
+  font-size: 92px;
+  background: rgb(240, 252, 255);
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 12px 24px rgba(212, 128, 156, 0.35);
+}
+
+form {
+  display: grid;
+  grid-template-columns: 1fr 90px;
+  gap: 10px;
+}
+
+input,
+button {
+  height: 48px;
+  border-radius: 999px;
+  font: inherit;
+}
+
+input {
+  min-width: 0;
+  padding: 0 16px;
+  border: 1px solid #cfd8e3;
+  outline: none;
+}
+
+input:focus {
+  border-color: hotpink;
+  box-shadow: 0 0 0 4px rgba(255, 105, 180, 0.2);
+}
+
+button {
+  border: 0;
+  color: #2c2412;
+  background: pink;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+button:hover {
+  background: rgb(254, 120, 140);
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(3px);
+}
+
+.button-row {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.bubble::before {
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 20px solid rgb(222, 245, 251);
+}
+
+
+.randomBtn {
+  color: #2c2412;
+  background: rgb(242, 242, 155);
+}
+
+.randomBtn:hover {
+  background: rgb(245, 245, 95);
+}
+
+#count {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 4px 10px;
+  color: orangered;
+  background: white;
+  border-radius: 999px;
+  font-size: 16px;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+li {
+  margin-bottom: 12px;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 1fr 58px 58px;
+  gap: 8px;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #dde4ee;
+  border-radius: 18px;
+  box-shadow: 0 5px 0 rgba(212, 128, 156, 0.18);
+}
+
+li span {
+  overflow-wrap: anywhere;
+}
+
+li button {
+  height: 36px;
+  color: #222;
+  background: #e8edf4;
+  box-shadow: 0 4px 0 #cfd8e3;
+}
+
+li button:hover {
+  background: #dce4ee;
+  box-shadow: 0 6px 0 #cfd8e3;
+}
+
+li .delete {
+  color: white;
+  background: rgb(223, 99, 99);
+  box-shadow: 0 3px 0 rgb(190, 78, 78);
+}
+
+li .delete:hover {
+  background: rgb(210, 82, 82);
+  box-shadow: 0 3px 0 rgb(190, 78, 78);
+}
+
+#emptyText {
+  margin: 18px 0 0;
+  padding: 18px;
+  color: darkgray;
+  text-align: center;
+  background: white;
+  border: 1px dotted lightgray;
+  border-radius: 18px;
+}
+
+.hide {
+  display: none;
+}
+
+@media (max-width: 800px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 500px) {
+  main {
+    padding: 24px 0;
+  }
+
+  .box {
+    padding: 22px;
+  }
+
+  form,
+  .button-row,
+  li {
+    grid-template-columns: 1fr;
+  }
+}
