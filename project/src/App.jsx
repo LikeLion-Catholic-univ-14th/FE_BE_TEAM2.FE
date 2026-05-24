@@ -32,7 +32,7 @@ function App() {
   const fetchMessages = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/messages"
+        "http://18.218.199.72:8080/messages"
       );
 
       const data = await response.json();
