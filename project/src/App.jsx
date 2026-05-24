@@ -67,7 +67,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/messages",
+        "http://18.218.199.72:8080/messages",
         {
           method: "POST",
           headers: {
@@ -114,7 +114,7 @@ useEffect(() => {
   const deleteSentence = async (index) => {
     try {
       await fetch(
-        `http://localhost:8080/messages/${index + 1}`,
+        `http://18.218.199.72:8080/messages/${index + 1}`,
         {
           method: "DELETE",
         }
