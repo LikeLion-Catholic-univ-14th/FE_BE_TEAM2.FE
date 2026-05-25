@@ -32,7 +32,7 @@ function App() {
   const fetchMessages = async () => {
     try {
       const response = await fetch(
-        "//18.218.199.72:8080/messages"
+        "https://animal-talk.duckdns.org/messages"
       );
 
       const data = await response.json();
@@ -67,7 +67,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        "//18.218.199.72:8080/messages",
+        "https://animal-talk.duckdns.org/messages",
         {
           method: "POST",
           headers: {
@@ -114,7 +114,7 @@ useEffect(() => {
   const deleteSentence = async (index) => {
     try {
       await fetch(
-        `//18.218.199.72:8080/messages/${index + 1}`,
+        `https://animal-talk.duckdns.org/messages/${index + 1}`,
         {
           method: "DELETE",
         }
