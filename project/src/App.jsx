@@ -26,7 +26,7 @@ function App() {
     "강아지",
   ]);
 
-  const [editIndex, setEditIndex] = useState(-1);
+  const [editId, setEditId] = useState(null);
 
   // GET
   const fetchMessages = async () => {
@@ -37,11 +37,8 @@ function App() {
 
       const data = await response.json();
 
-      const messages = data.map(
-        (item) => item.message
-      );
-
-      setSentences(messages);
+      // 전체 객체 저장
+      setSentences(data);
 
     } catch (error) {
       console.error(error);
@@ -53,7 +50,7 @@ function App() {
     fetchMessages();
   }, []);
 
-  // 저장 / 수정 (POST)
+  // 저장 / 수정
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -62,27 +59,66 @@ function App() {
     if (!sentence) return;
 
     try {
-      const response = await fetch(
-        "https://animal-talk.duckdns.org/messages",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: sentence,
-          }),
-        }
-      );
 
-      const data = await response.json();
+      // 수정
+      if (editId !== null) {
 
-      setBubble(data.message);
+        const response = await fetch(
+          `https://animal-talk.duckdns.org/messages/${editId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              message: sentence,
+            }),
+          }
+        );
+
+        const updatedMessage =
+          await response.json();
+
+        const updated = sentences.map(
+          (item) =>
+            item.id === editId
+              ? updatedMessage
+              : item
+        );
+
+        setSentences(updated);
+
+        setBubble(updatedMessage.message);
+
+        setEditId(null);
+
+      } else {
+
+        // 저장
+        const response = await fetch(
+          "https://animal-talk.duckdns.org/messages",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              message: sentence,
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        setSentences([
+          ...sentences,
+          data,
+        ]);
+
+        setBubble(data.message);
+      }
+
       setInput("");
-      setEditIndex(-1);
-
-      // 🔥 서버 기준 다시 불러오기
-      await fetchMessages();
 
     } catch (error) {
       console.error(error);
@@ -91,25 +127,33 @@ function App() {
   };
 
   // 수정 버튼
-  const editSentence = (index) => {
-    setInput(sentences[index]);
-    setEditIndex(index);
+  const editSentence = (sentence) => {
+    setInput(sentence.message);
+    setEditId(sentence.id);
   };
 
-  // 삭제 버튼 (DELETE)
-  const deleteSentence = async (index) => {
+  // 삭제 버튼
+  const deleteSentence = async (id) => {
     try {
+
       await fetch(
-        `https://animal-talk.duckdns.org/messages/${index + 1}`,
+        `https://animal-talk.duckdns.org/messages/${id}`,
         {
           method: "DELETE",
         }
       );
 
-      // 🔥 서버 기준 다시 불러오기
-      await fetchMessages();
+      const updated = sentences.filter(
+        (sentence) =>
+          sentence.id !== id
+      );
 
-      setEditIndex(-1);
+      setSentences(updated);
+
+      if (editId === id) {
+        setEditId(null);
+        setInput("");
+      }
 
     } catch (error) {
       console.error(error);
@@ -119,18 +163,20 @@ function App() {
 
   // 말하기 버튼
   const handleSpeak = () => {
+
     const lastSentence =
       sentences[sentences.length - 1];
 
     setBubble(
       input.trim() ||
-      lastSentence ||
+      lastSentence?.message ||
       "먼저 문장을 입력해줘!"
     );
   };
 
   // 랜덤 동물 버튼
   const randomAnimal = () => {
+
     const randomIndex = Math.floor(
       Math.random() * animals.length
     );
@@ -140,7 +186,9 @@ function App() {
 
   return (
     <main>
+
       <section className="box">
+
         <p className="eyebrow">
           프-백 연합 프로젝트 : 서윤소래
         </p>
@@ -159,6 +207,7 @@ function App() {
         </div>
 
         <div className="animal-area">
+
           <div className="bubble">
             {bubble}
           </div>
@@ -168,9 +217,11 @@ function App() {
           </div>
 
           <h2>{animal[1]}</h2>
+
         </div>
 
         <form onSubmit={handleSubmit}>
+
           <input
             type="text"
             placeholder="가르칠 문장을 입력하세요"
@@ -182,13 +233,15 @@ function App() {
           />
 
           <button type="submit">
-            {editIndex === -1
+            {editId === null
               ? "저장"
               : "수정"}
           </button>
+
         </form>
 
         <div className="button-row">
+
           <button
             type="button"
             onClick={handleSpeak}
@@ -203,50 +256,67 @@ function App() {
           >
             🎲 랜덤 동물
           </button>
+
         </div>
+
       </section>
 
       <section className="box">
+
         <h2>
           저장한 문장{" "}
-          <span>{sentences.length}개</span>
+          <span>
+            {sentences.length}개
+          </span>
         </h2>
 
         {sentences.length === 0 ? (
+
           <p id="emptyText">
             아직 저장한 문장이 없어요.
           </p>
+
         ) : (
+
           <ul id="list">
-            {sentences.map(
-              (sentence, index) => (
-                <li key={index}>
-                  <span>{sentence}</span>
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      editSentence(index)
-                    }
-                  >
-                    수정
-                  </button>
+            {sentences.map((sentence) => (
 
-                  <button
-                    type="button"
-                    className="delete"
-                    onClick={() =>
-                      deleteSentence(index)
-                    }
-                  >
-                    삭제
-                  </button>
-                </li>
-              )
-            )}
+              <li key={sentence.id}>
+
+                <span>
+                  {sentence.message}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    editSentence(sentence)
+                  }
+                >
+                  수정
+                </button>
+
+                <button
+                  type="button"
+                  className="delete"
+                  onClick={() =>
+                    deleteSentence(sentence.id)
+                  }
+                >
+                  삭제
+                </button>
+
+              </li>
+
+            ))}
+
           </ul>
+
         )}
+
       </section>
+
     </main>
   );
 }
