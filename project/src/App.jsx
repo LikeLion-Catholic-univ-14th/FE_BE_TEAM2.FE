@@ -15,7 +15,10 @@ function App() {
     ["🐥", "병아리"],
   ];
 
+  // 🔥 message 문자열만 저장하지 말고
+  // id 포함 객체 전체 저장
   const [sentences, setSentences] = useState([]);
+
   const [input, setInput] = useState("");
   const [bubble, setBubble] = useState(
     "안녕! 무엇을 배워볼까?💭"
@@ -26,6 +29,7 @@ function App() {
     "강아지",
   ]);
 
+  // 수정할 DB id 저장
   const [editId, setEditId] = useState(null);
 
   // GET
@@ -37,7 +41,7 @@ function App() {
 
       const data = await response.json();
 
-      // 전체 객체 저장
+      // 🔥 id 포함 전체 저장
       setSentences(data);
 
     } catch (error) {
@@ -45,7 +49,7 @@ function App() {
     }
   };
 
-  // 처음 실행 시 메시지 불러오기
+  // 첫 로딩
   useEffect(() => {
     fetchMessages();
   }, []);
@@ -59,66 +63,25 @@ function App() {
     if (!sentence) return;
 
     try {
+      await fetch(
+        "https://animal-talk.duckdns.org/messages",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: sentence,
+          }),
+        }
+      );
 
-      // 수정
-      if (editId !== null) {
-
-        const response = await fetch(
-          `https://animal-talk.duckdns.org/messages/${editId}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              message: sentence,
-            }),
-          }
-        );
-
-        const updatedMessage =
-          await response.json();
-
-        const updated = sentences.map(
-          (item) =>
-            item.id === editId
-              ? updatedMessage
-              : item
-        );
-
-        setSentences(updated);
-
-        setBubble(updatedMessage.message);
-
-        setEditId(null);
-
-      } else {
-
-        // 저장
-        const response = await fetch(
-          "https://animal-talk.duckdns.org/messages",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              message: sentence,
-            }),
-          }
-        );
-
-        const data = await response.json();
-
-        setSentences([
-          ...sentences,
-          data,
-        ]);
-
-        setBubble(data.message);
-      }
-
+      setBubble(sentence);
       setInput("");
+      setEditId(null);
+
+      // 🔥 서버 기준 다시 동기화
+      await fetchMessages();
 
     } catch (error) {
       console.error(error);
@@ -135,25 +98,21 @@ function App() {
   // 삭제 버튼
   const deleteSentence = async (id) => {
     try {
-
-      await fetch(
+      const response = await fetch(
         `https://animal-talk.duckdns.org/messages/${id}`,
         {
           method: "DELETE",
         }
       );
 
-      const updated = sentences.filter(
-        (sentence) =>
-          sentence.id !== id
-      );
-
-      setSentences(updated);
-
-      if (editId === id) {
-        setEditId(null);
-        setInput("");
+      if (!response.ok) {
+        throw new Error("삭제 실패");
       }
+
+      // 🔥 서버 기준 다시 불러오기
+      await fetchMessages();
+
+      setEditId(null);
 
     } catch (error) {
       console.error(error);
@@ -161,9 +120,8 @@ function App() {
     }
   };
 
-  // 말하기 버튼
+  // 말하기
   const handleSpeak = () => {
-
     const lastSentence =
       sentences[sentences.length - 1];
 
@@ -174,9 +132,8 @@ function App() {
     );
   };
 
-  // 랜덤 동물 버튼
+  // 랜덤 동물
   const randomAnimal = () => {
-
     const randomIndex = Math.floor(
       Math.random() * animals.length
     );
@@ -186,9 +143,7 @@ function App() {
 
   return (
     <main>
-
       <section className="box">
-
         <p className="eyebrow">
           프-백 연합 프로젝트 : 서윤소래
         </p>
@@ -207,7 +162,6 @@ function App() {
         </div>
 
         <div className="animal-area">
-
           <div className="bubble">
             {bubble}
           </div>
@@ -217,11 +171,9 @@ function App() {
           </div>
 
           <h2>{animal[1]}</h2>
-
         </div>
 
         <form onSubmit={handleSubmit}>
-
           <input
             type="text"
             placeholder="가르칠 문장을 입력하세요"
@@ -237,11 +189,9 @@ function App() {
               ? "저장"
               : "수정"}
           </button>
-
         </form>
 
         <div className="button-row">
-
           <button
             type="button"
             onClick={handleSpeak}
@@ -256,34 +206,23 @@ function App() {
           >
             🎲 랜덤 동물
           </button>
-
         </div>
-
       </section>
 
       <section className="box">
-
         <h2>
           저장한 문장{" "}
-          <span>
-            {sentences.length}개
-          </span>
+          <span>{sentences.length}개</span>
         </h2>
 
         {sentences.length === 0 ? (
-
           <p id="emptyText">
             아직 저장한 문장이 없어요.
           </p>
-
         ) : (
-
           <ul id="list">
-
             {sentences.map((sentence) => (
-
               <li key={sentence.id}>
-
                 <span>
                   {sentence.message}
                 </span>
@@ -306,17 +245,11 @@ function App() {
                 >
                   삭제
                 </button>
-
               </li>
-
             ))}
-
           </ul>
-
         )}
-
       </section>
-
     </main>
   );
 }
